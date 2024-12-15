@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: davidmr12/mybackend:v4
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "1000m"
+        env:
+        - name: MYSQL_HOST
+          value: mysql-service
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_DATABASE
+          value: quest_web
+        - name: MYSQL_USER
+          value: david
+        - name: MYSQL_PASSWORD
+          value: david
+      #   volumeMounts:
+      #   - name: data-protection-keys
+      #     mountPath: "/root/.aspnet/DataProtection-Keys"
+      # volumes:
+      # - name: data-protection-keys
+      #   persistentVolumeClaim:
+      #     claimName: mysql-pvc

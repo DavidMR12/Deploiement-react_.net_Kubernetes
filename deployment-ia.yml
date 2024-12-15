@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ia
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ia
+  template:
+    metadata:
+      labels:
+        app: ia
+    spec:
+      containers:
+      - name: ia
+        image: davidmr12/ia:v1
+        ports:
+        - containerPort: 5000
