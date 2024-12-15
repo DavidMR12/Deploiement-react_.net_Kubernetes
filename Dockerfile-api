@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+# Créer le dossier Uploads avant de copier les fichiers
+RUN mkdir -p /app/Uploads
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ./quest_web.csproj ./src/
+RUN dotnet restore ./src/quest_web.csproj
+COPY . .
+WORKDIR /src
+RUN dotnet build ./quest_web.csproj -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish ./quest_web.csproj -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+RUN apt-get update && apt-get install -y curl nano iputils-ping && rm -rf /var/lib/apt/lists/*
+ENTRYPOINT ["dotnet", "quest_web.dll"]
